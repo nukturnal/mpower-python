@@ -9,8 +9,8 @@ Installation
 
 .. code-block:: bash
 
-    $ sudo pip install mpower`
-    $ OR git clone https://github.com/mawuli-ypa/mpower-python
+    $ sudo pip install mpower
+    $ OR git clone https://github.com/nukturnal/mpower-python
     $ cd mpower-python; python setup.py install`
     $ python setup.py test # run unit tests
 
