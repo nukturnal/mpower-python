@@ -3,6 +3,7 @@ MPower Python Client Library
 
 This is a python library for accessing the MPower Payments HTTP API
 
+
 Installation
 ------------
 
@@ -11,6 +12,7 @@ Installation
     $ sudo pip install mpower`
     $ OR git clone https://github.com/mawuli-ypa/mpower-python
     $ cd mpower-python; python setup.py install`
+    $ python setup.py test # run unit tests
 
 Usage
 -----
@@ -20,58 +22,60 @@ Usage
     from mpower import (Invoice, OPR, DirectPay,
                            DirectCard, Store)
 
-    # Your MPower developer tokens
-    MP_CONFIGS = {
-    'MP-Master-Key': "5b9f531a-fbb8-487a-8045-3b4c7ac5acee",
-    'MP-Private-Key': "test_private_oGslgmzSNL3RSkjlsnPOsZZg9IA",
-    'MP-Token': "ff1d576409b2587cc1c2",
-    }
-
-    store = Store()
-    items =  [{"name": "VIP Ticket", "quantity": 2,
-                       "unit_price": "35.0", "total_price": "70.0",
-                        "description": "VIP Tickets for the MPower Event"}]
-    invoice = Invoice(store, MP_CONFIGS)
-    invoice.add_items(items)
+    # Invoice
+    store = Store({'name':'FooBar Shop'})
+    items = [{"name": "VIP Ticket", "quantity": 2,
+         "unit_price": "35.0", "total_price": "70.0",
+         "description": "VIP Tickets for the MPower Event"}]
+    invoice = MPInvoice(self.store, MP_ACCESS_TOKENS, True)
+    invoice.add_items(self.items * 10)
     # taxes are (key,value) pairs
     invoice.add_taxes([("NHIS TAX", 23.8), ("VAT", 5)])
-    invoice.add_custom_data([("phone_brand", Motorola V3"),
+    invoice.add_custom_data([("phone_brand", "Motorola V3"),
                 ("model", "65456AH23")])
-    successful, response = invoice.process()
+
+    # you can also pass the items, taxes, custom to the `create` method
+    successful, response = invoice.create()
     if successful:
         do_something_with_resp(response)
 
+    # confirm invoice
+    invoice.confirm(response['token'])
 
-    successful, response = DirectPay("0246XXXXXX", 230.40,
-                MP_CONFIGS).process()
+
+    # OPR
+    opr_data = {'account_alias': '0266636984',
+                'description': 'Hello World',
+                 'total_amount': 345}
+    store = Store({"name":"FooBar Shop"})
+    opr = OPR(self.opr_data, store, MP_ACCESS_TOKENS, True)
+    # You can also pass the data to the `create` function
+    successful, response = opr.create()
     if successful:
-       do_something_with_resp(resp)
+       do_something_with_response(response)
+    status, _ = opr.charge({'token': token,
+                    'confirm_token': user_submitted_token})
 
-    card_info = { "card_name" : "Alfred Robert Rowe",
-          "card_number" : "4242424242424242", "card_cvc" : "123",
-          "exp_month" : "06", "exp_year" : "2010", "amount" : "300"
-        }
 
-    direct_card = DirectCard(card_info, MP_CONFIGS)
+    # Direct card
+    card_info = {"card_name" : "Alfred Robert Rowe",
+        "card_number" : "4242424242424242", "card_cvc" : "123",
+        "exp_month" : "06", "exp_year" : "2010", "amount" : "300"
+    }
+    direct_card = DirectCard(card_info, MP_ACCESS_TOKENS, True)
+    # this request should fail since the card_info data is invalid
     successful, response = direct_card.process()
-    if successful:
-        do_something_with_resp(response)
 
-    # OPR is a two-step process: create OPR and then charge OPR
-    opr = OPR(store, MP_CONFIGS)
-    successful, response = opr.create({"account_alias": "0246XXXXXX",
-    "description": "Sample OPR transaction", "total_amount": 120})
-    if successful:
-        # token returned from server
-        token = response["token"]
-        ok, resp = charge_opr({"token": token, "confirm_token": confirm_token})
-        if ok:
-           do_something_with_response(resp)
 
-        else:
-           # take action
+    # Direct Pay
+    account_alias =  "0266636984"
+    amount =  30.50
+    # toggle debug switch to True
+    direct_pay = DirectPay(account_alias, amount, MP_ACCESS_TOKENS, True)
+    status, response = direct_pay.process()
 
-LICENSE
+
+License
 -------
 see LICENSE.txt
 
@@ -81,15 +85,17 @@ Contributing
 Issues, forks, and pull requests are welcome!
 
 
-NOTE
+Note
 ----
+- You can also set the following system/shell variables for use with library:
+  MP_Master_Key, MP_Public_Key, MP_Token
+- OR, use *MP_ACCESS_TOKENS* as the variable name that holds your
+  MPower Payments Access Tokens.
+  For example: MP_ACCESS_TOKENS = {"MP-Master-key": "ATGHJIUTF", ...}.
+  This variable is picked up at runtime as a measure of last resort
 - This is a proof of concept, and the API will suffer major changes
+- Some of the API calls require formal approval from MPower Payments
+- This library has not being used in any production environment, yet.
 - For more information, please read the  `MPower Payments HTTP API`_
 
 .. _MPower Payments HTTP API: http://mpowerpayments.com/developers/docs/http.html
-
-TODO
-----
-- Add unitests for both sandbox and live endpoints
-- Add code examples
-- Remove repeated passing of CONFIGS around functions calls. Ideally, this configs should be passed only once

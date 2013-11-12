@@ -1,5 +1,6 @@
 """Payment processing logic for DirectPay, DirectCard, Invoice, and OPR"""
 import os
+import sys
 import urllib2
 try:
     import simplejson as json
@@ -15,19 +16,32 @@ LIVE_ENDPOINT="https://app.mpowerpayments.com/api/%s/" % API_VERSION
 # user-agent headers
 MP_USER_AGENT="MPower-Python client library - v0.1.0"
 
+
+class MPowerError(Exception):
+    """Base Exception class"""
+    def __init__(self, value):
+        self.value = value
+    def __str__(self):
+        return repr(self.value)
+
+
 class Payment(object):
-    def __init__(self, configs, debug=False):
+    def __init__(self, configs={}, debug=False):
         """Base class for all the other payment libraries"""
         # fallback on system environment variables, 
         self.config = {
-            'MP-Master-Key': configs.get('MP_Master_Key',
+            'MP-Master-Key': configs.get('MP-Master-Key',
                                          os.environ.get('MP_Master_Key',)), 
-            'MP-Private-Key': configs.get('MP_Private_Key', 
+            'MP-Private-Key': configs.get('MP-Private-Key', 
                                           os.environ.get('MP_Private_Key')),
-            'MP-Token': configs.get('MP_Token', 
+            'MP-Token': configs.get('MP-Token', 
                                     os.environ.get('MP_Token'))
         }
-        # request headers
+        # fallback on global MP_ACCESS_TOKENS runtime variable
+        if not all(self.config.values()):
+            self.config.update(self.runtime_configs)
+
+       # request headers
         self._headers = {'User-Agent': MP_USER_AGENT, 
                          "Content-Type": "application/json"}
         # response object
@@ -61,7 +75,7 @@ class Payment(object):
         """Returns the client's Request headers"""
         return dict(self.config.items() + self._headers.items())
 
-    def add_header(header):
+    def add_header(self, header):
         """Add a custom HTTP header to the client's request headers"""
         if type(header) is dict:
             self._headers.update(header)
@@ -70,6 +84,15 @@ class Payment(object):
             
     def get_rsc_endpoint(self, rsc):
         """Returns the HTTP API URL for current payment transaction"""
-        if not self.debug:            
+        if self.debug:            
             return SANDBOX_ENDPOINT + rsc
         return LIVE_ENDPOINT + rsc
+
+    @property
+    def runtime_configs(self):
+        """Returns the MP_ACCESS_TOKENS runtime variable"""
+        var_name = "MP_ACCESS_TOKENS"
+        calling_frame = sys._getframe().f_back
+        var_val = calling_frame.f_locals.get(var_name, 
+                                             calling_frame.f_globals.get(var_name, None))
+        return var_val if var_val else {}

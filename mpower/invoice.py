@@ -3,7 +3,7 @@ from .core import Payment
 from .store import Store
 
 class Invoice(Payment): 
-    def __init__(self, store=None,configs={}):
+    def __init__(self, store=None,configs={}, debug=False):
         """Create an invoice
 
         Accepts list of store object as initial parameter and a dictionary of tokens
@@ -17,7 +17,7 @@ class Invoice(Payment):
         self.total_amount = 0
         self.custom_data = {}
         self.taxes = {}
-        super(Invoice, self).__init__(configs)
+        super(Invoice, self).__init__(configs, debug)
 
     def create(self, items=[], taxes=[], custom_data=[]):
         """Adds the items to the invoice
@@ -40,7 +40,7 @@ class Invoice(Payment):
         _token = token if token else self._response.get("token")
         return self._process('checkout-invoice/confirm/' + str(_token))
         
-    def add_taxes(self, taxes=[]):
+    def add_taxes(self, taxes):
         """Appends the data to the 'taxes' key in the request object
         
         'taxes' should be in format: [("tax_name", "tax_amount")]
@@ -48,7 +48,7 @@ class Invoice(Payment):
         [("NHIs TAX", 23.8), ("VAT", 5)]
         """
         for idx, tax in enumerate(taxes):
-          self._taxes.update({"tax_" + str(idx):{"name": tax[0], "amount": tax[1]}})        
+            self.taxes.update({"tax_" + str(idx):{"name": tax[0], "amount": tax[1]}})       
 
     def add_custom_data(self, data=[]):
         """Adds the data to teh custom data sent to the server

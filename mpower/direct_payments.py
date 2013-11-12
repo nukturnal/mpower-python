@@ -11,9 +11,9 @@ class DirectCard(Payment):
           "exp_month" : "06", "exp_year" : "2010", "amount" : "300" 
         }'
     """
-    def __init__(self, card_info={}, configs={}):
+    def __init__(self, card_info={}, configs={}, debug=False):
         self.card_info = card_info
-        super(DirectCard, self).__init__(configs)
+        super(DirectCard, self).__init__(configs, debug)
     
     def process(self, card_info=None):
         """proces the direct card billing transaction"""
@@ -26,10 +26,10 @@ class DirectPay(Payment):
     Receipient account_info format:
     '{ "account_alias" : "0244124660", "amount" : 30.50 }'
     """
-    def __init__(self, account_alias=None, amount=None, configs={}):
+    def __init__(self, account_alias=None, amount=None, configs={}, debug=False):
         self.transaction = {'account_alias': account_alias, 'amount': amount}
-        super(DirectPay, self).__init__(configs)
+        super(DirectPay, self).__init__(configs, debug)
 
-    def process(self, transaction):
+    def process(self, transaction=None):
         """Process the transaction"""
         return self._process('direct-pay/credit-account', transaction or  self.transaction)
