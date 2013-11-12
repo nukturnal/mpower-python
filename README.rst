@@ -27,7 +27,7 @@ Usage
     items = [{"name": "VIP Ticket", "quantity": 2,
          "unit_price": "35.0", "total_price": "70.0",
          "description": "VIP Tickets for the MPower Event"}]
-    invoice = MPInvoice(self.store, MP_ACCESS_TOKENS, True)
+    invoice = Invoice(self.store, MP_ACCESS_TOKENS, True)
     invoice.add_items(self.items * 10)
     # taxes are (key,value) pairs
     invoice.add_taxes([("NHIS TAX", 23.8), ("VAT", 5)])
