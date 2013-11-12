@@ -22,6 +22,13 @@ Usage
     from mpower import (Invoice, OPR, DirectPay,
                            DirectCard, Store)
 
+    # runtime configs
+    MP_ACCESS_TOKENS = {
+        'MP-Master-Key': "5b9f531a-fbb8-487a-8045-3b4c7ac5acee",
+        'MP-Private-Key': "test_private_oGslgmzSNL3RSkjlsnPOsZZg9IA",
+        'MP-Token': "ff1d576409b2587cc1c2"
+    }
+
     # Invoice
     store = Store({'name':'FooBar Shop'})
     items = [{"name": "VIP Ticket", "quantity": 2,
@@ -44,7 +51,7 @@ Usage
 
 
     # OPR
-    opr_data = {'account_alias': '0266636984',
+    opr_data = {'account_alias': '02XXXXXXXX',
                 'description': 'Hello World',
                  'total_amount': 345}
     store = Store({"name":"FooBar Shop"})
@@ -68,7 +75,7 @@ Usage
 
 
     # Direct Pay
-    account_alias =  "0266636984"
+    account_alias =  "02XXXXXXXX"
     amount =  30.50
     # toggle debug switch to True
     direct_pay = DirectPay(account_alias, amount, MP_ACCESS_TOKENS, True)
