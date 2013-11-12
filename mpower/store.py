@@ -13,4 +13,4 @@ class Store(object):
                      "phone": info.get("phone"),
                      "logo_url": info.get("logo_url"),
                      "website_url": info.get("website_url")
-        },
+        }

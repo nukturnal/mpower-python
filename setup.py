@@ -54,6 +54,12 @@ class CleanCommand(Command):
             except:
                 pass
 
+def readme(filename='README.rst'):
+    with open('README.rst') as f:
+        text=f.read()
+    f.close()
+    return text
+
 setup(
     name='mpower',
     version='0.1.0',
@@ -66,9 +72,10 @@ setup(
     license='LICENSE.txt',
     keywords="mpower mobile money payments",
     description='MPower Payments Python client library',
-    long_description=open('README.rst').read(),
+    long_description=readme('README.rst'),
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
+        "Intended Audience :: Developers",
         "Topic :: Utilities",
         "License :: OSI Approved :: MIT License",
     ],

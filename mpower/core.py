@@ -18,12 +18,13 @@ MP_USER_AGENT="MPower-Python client library - v0.1.0"
 class Payment(object):
     def __init__(self, configs, debug=False):
         """Base class for all the other payment libraries"""
+        # fallback on system environment variables, 
         self.config = {
-            'MP_Master_Key': configs.get('MP_Master_Key',
+            'MP-Master-Key': configs.get('MP_Master_Key',
                                          os.environ.get('MP_Master_Key',)), 
-            'MP_Private_Key': configs.get('MP_Private_Key', 
+            'MP-Private-Key': configs.get('MP_Private_Key', 
                                           os.environ.get('MP_Private_Key')),
-            'MP_Token': configs.get('MP_Token', 
+            'MP-Token': configs.get('MP_Token', 
                                     os.environ.get('MP_Token'))
         }
         # request headers
@@ -40,14 +41,19 @@ class Payment(object):
 
         Sends an HTTP request to the currently active endpoint of the MPower API
         """
-        req = urllib2.Request(self.get_rsc_endpoint(resource), data or self._data, self.headers)
+        # Return None(resolves to a GET request) if no data is to be sent
+        _data = json.dumps(self._data) if self._data else None
+        # use object's accumulated data if no data is passed
+        _data = data if data else _data
+        req = urllib2.Request(self.get_rsc_endpoint(resource), 
+                              json.dumps(_data), self.headers)
         response = urllib2.urlopen(req)
         if response.code == 200:
             self._response = json.loads(response.read())
-            if self._response['response_code'] == 00:
+            if int(self._response['response_code']) == 00:
                 return (True, self._response)
             else:
-                return (False, None)
+                return (False, self._response['response_text'])
         return (response.code, "Request Failed")
 
     @property
@@ -64,6 +70,6 @@ class Payment(object):
             
     def get_rsc_endpoint(self, rsc):
         """Returns the HTTP API URL for current payment transaction"""
-        if self.debug:            
+        if not self.debug:            
             return SANDBOX_ENDPOINT + rsc
         return LIVE_ENDPOINT + rsc
