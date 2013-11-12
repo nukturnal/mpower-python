@@ -1,5 +1,5 @@
-MPower Python Client Library [in development]
-===============================================
+MPower Python Client Library
+============================
 
 This is a python library for accessing the MPower Payments HTTP API
 
@@ -9,7 +9,7 @@ Installation
 .. code-block:: bash
 
     $ sudo pip install mpower`
-    $ OR git clone https://github.com/mawuli-ypa/mpower-ython
+    $ OR git clone https://github.com/mawuli-ypa/mpower-python
     $ cd mpower-python; python setup.py install`
 
 Usage
@@ -19,6 +19,8 @@ Usage
 
     from mpower import (Invoice, OPR, DirectPay,
                            DirectCard, Store)
+
+    # Your MPower developer tokens
     MP_CONFIGS = {
     'MP-Master-Key': "5b9f531a-fbb8-487a-8045-3b4c7ac5acee",
     'MP-Private-Key': "test_private_oGslgmzSNL3RSkjlsnPOsZZg9IA",
@@ -31,14 +33,17 @@ Usage
                         "description": "VIP Tickets for the MPower Event"}]
     invoice = Invoice(store, MP_CONFIGS)
     invoice.add_items(items)
+    # taxes are (key,value) pairs
     invoice.add_taxes([("NHIS TAX", 23.8), ("VAT", 5)])
-    invoice.add_custom_data([("phone_brand", Motorola V3"), ("model", "65456AH23")])
+    invoice.add_custom_data([("phone_brand", Motorola V3"),
+                ("model", "65456AH23")])
     successful, response = invoice.process()
     if successful:
         do_something_with_resp(response)
 
 
-    successful, response = DirectPay("0246XXXXXX", 230.40, MP_CONFIGS).process()
+    successful, response = DirectPay("0246XXXXXX", 230.40,
+                MP_CONFIGS).process()
     if successful:
        do_something_with_resp(resp)
 
@@ -75,6 +80,13 @@ Contributing
 ------------
 Issues, forks, and pull requests are welcome!
 
+
+NOTE
+----
+- This is a proof of concept, and the API will suffer major changes
+- For more information, please read the  `MPower Payments HTTP API`_
+
+.. _MPower Payments HTTP API: http://mpowerpayments.com/developers/docs/http.html
 
 TODO
 ----
