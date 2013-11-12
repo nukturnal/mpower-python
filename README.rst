@@ -27,8 +27,8 @@ Usage
     items = [{"name": "VIP Ticket", "quantity": 2,
          "unit_price": "35.0", "total_price": "70.0",
          "description": "VIP Tickets for the MPower Event"}]
-    invoice = MPInvoice(self.store, MP_ACCESS_TOKENS, True)
-    invoice.add_items(self.items * 10)
+    invoice = Invoice(store, MP_ACCESS_TOKENS, True)
+    invoice.add_items(items * 10)
     # taxes are (key,value) pairs
     invoice.add_taxes([("NHIS TAX", 23.8), ("VAT", 5)])
     invoice.add_custom_data([("phone_brand", "Motorola V3"),
@@ -48,7 +48,7 @@ Usage
                 'description': 'Hello World',
                  'total_amount': 345}
     store = Store({"name":"FooBar Shop"})
-    opr = OPR(self.opr_data, store, MP_ACCESS_TOKENS, True)
+    opr = OPR(opr_data, store, MP_ACCESS_TOKENS, True)
     # You can also pass the data to the `create` function
     successful, response = opr.create()
     if successful:
