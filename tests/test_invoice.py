@@ -28,13 +28,11 @@ class Invoice(unittest.TestCase):
     def test_add_items(self):
         _items = len(self.invoice.items)
         self.invoice.add_items(self.items * 2)
-        print "items = %s" % len(self.invoice.items)
         self.assertTrue(len(self.invoice.items) > _items)
 
     def test_add_taxes(self):
         _taxes = len(self.invoice.taxes)
         self.invoice.add_taxes([("Foo_TAX", 9)])
-        print self.invoice.taxes
         self.assertTrue(len(self.invoice.taxes) > _taxes)
 
     def test_add_custom_data(self):

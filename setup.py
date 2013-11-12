@@ -35,7 +35,7 @@ class TestCommand(Command):
 
 class CleanCommand(Command):
     """Recursively Delete all compile python modules"""
-    user_options = [ ]
+    user_options = []
 
     def initialize_options(self):
         self._clean_me = [ ]

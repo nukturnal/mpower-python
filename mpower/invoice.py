@@ -47,8 +47,11 @@ class Invoice(Payment):
         For example:
         [("NHIs TAX", 23.8), ("VAT", 5)]
         """
+        # fixme: how to resolve duplicate tax names
+        _idx = len(self.taxes) # current index to prevent overwriting
         for idx, tax in enumerate(taxes):
-            self.taxes.update({"tax_" + str(idx):{"name": tax[0], "amount": tax[1]}})       
+            tax_key = "tax_" + str(idx + _idx)
+            self.taxes[tax_key] = {"name": tax[0], "amount": tax[1]}       
 
     def add_custom_data(self, data=[]):
         """Adds the data to teh custom data sent to the server
@@ -59,8 +62,9 @@ class Invoice(Payment):
 
     def add_items(self, items=[]):
         """Updates the list of items in the current transaction"""
+        _idx = len(self.items)
         for idx, item in enumerate(items):
-            self.items.update({"item_" + str(idx): item})
+            self.items.update({"item_" + str(idx + _idx): item})
 
     @property
     def _prepare_data(self):
