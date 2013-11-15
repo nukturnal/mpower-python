@@ -1,20 +1,21 @@
 """MPower Payments Onsite Payments Request"""
-from .core import Payment
-from .store import Store
+from . import Payment, Store
+
 
 class OPR(Payment):
     """Onsite Payment Request"""
-    def __init__(self, data={}, store=None, configs={}, debug=False):
-        self.store = store or Store()
-        self._opr_data = self._build_opr_data(data, store) 
-        super(OPR,self).__init__(configs,debug)
+    def __init__(self, data={}, store=None):
+        self._opr_data = self._build_opr_data(data, store)
+        super(OPR,self).__init__()
+        if store:
+            self.store = store
 
     def _build_opr_data(self, data, store):
         """Returns a well formatted OPR data"""
-        return {"invoice_data" : {"invoice": 
+        return {"invoice_data" : {"invoice":
                                   {"total_amount": data.get("total_amount"),
-                                   "description": data.get("description")}, 
-                                   "store": store.info}, 
+                                   "description": data.get("description")},
+                                   "store": store.info},
                 "opr_data": {"account_alias" : data.get("account_alias")}}
 
     def create(self, data={}, store=None):

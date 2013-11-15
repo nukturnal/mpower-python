@@ -1,9 +1,9 @@
 """MPower Payments Invoice"""
-from .core import Payment
-from .store import Store
+from . import Payment, Store
 
-class Invoice(Payment): 
-    def __init__(self, store=None,configs={}, debug=False):
+
+class Invoice(Payment):
+    def __init__(self, store=None):
         """Create an invoice
 
         Accepts list of store object as initial parameter and a dictionary of tokens
@@ -12,18 +12,19 @@ class Invoice(Payment):
         self.cancel_url = None
         self.return_url = None
         self.description = None
-        self.store = store or Store()
         self.items = {}
         self.total_amount = 0
         self.custom_data = {}
         self.taxes = {}
-        super(Invoice, self).__init__(configs, debug)
+        super(Invoice, self).__init__()
+        if store:
+            self.store = store
 
     def create(self, items=[], taxes=[], custom_data=[]):
         """Adds the items to the invoice
 
         Format of 'items': [{"name": "VIP Ticket", "quantity": 2,
-                       "unit_price": "35.0", "total_price": "70.0", 
+                       "unit_price": "35.0", "total_price": "70.0",
                         "description": "VIP Tickets for the MPower Event"},...]
         See the MPower Payments APi for more information on the format of the 'items'
         """
@@ -34,15 +35,15 @@ class Invoice(Payment):
 
     def confirm(self, token=None):
         """Returns the status of the invoice
-        
+
         STATUSES: pending, completed, cancelled
         """
         _token = token if token else self._response.get("token")
         return self._process('checkout-invoice/confirm/' + str(_token))
-        
+
     def add_taxes(self, taxes):
         """Appends the data to the 'taxes' key in the request object
-        
+
         'taxes' should be in format: [("tax_name", "tax_amount")]
         For example:
         [("NHIs TAX", 23.8), ("VAT", 5)]
@@ -51,7 +52,7 @@ class Invoice(Payment):
         _idx = len(self.taxes) # current index to prevent overwriting
         for idx, tax in enumerate(taxes):
             tax_key = "tax_" + str(idx + _idx)
-            self.taxes[tax_key] = {"name": tax[0], "amount": tax[1]}       
+            self.taxes[tax_key] = {"name": tax[0], "amount": tax[1]}
 
     def add_custom_data(self, data=[]):
         """Adds the data to teh custom data sent to the server
@@ -70,13 +71,13 @@ class Invoice(Payment):
     def _prepare_data(self):
         """Formats the data in the current transaction for processing"""
         total_amount = self.total_amount or self.calculate_total_amt()
-        self._data = {"invoice": {"items": self.items, "taxes": self.taxes, 
-                                  "total_amount": total_amount, 
+        self._data = {"invoice": {"items": self.items, "taxes": self.taxes,
+                                  "total_amount": total_amount,
                                   "description": self.description,
                                   },
-                      "store": self.store.info, 
+                      "store": self.store.info,
                       "custom_data": self.custom_data,
-                      "actions": {"cancel_url": self.cancel_url, 
+                      "actions": {"cancel_url": self.cancel_url,
                                   "return_url": self.return_url}}
         return self._data
 
@@ -84,6 +85,3 @@ class Invoice(Payment):
         """Returns the total amount/cost of items in the current invoice"""
         _items = items.items() or self.items.items()
         return sum(float(x[1]['total_price']) for x in _items)
-
-        
-    
