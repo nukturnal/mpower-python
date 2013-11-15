@@ -19,8 +19,7 @@ Usage
 
 .. code-block:: python
 
-    from mpower import (Invoice, OPR, DirectPay,
-                           DirectCard, Store)
+    import mpower
 
     # runtime configs
     MP_ACCESS_TOKENS = {
@@ -28,13 +27,17 @@ Usage
         'MP-Private-Key': "test_private_oGslgmzSNL3RSkjlsnPOsZZg9IA",
         'MP-Token': "ff1d576409b2587cc1c2"
     }
+    # defaults to False
+    mpower.debug = True
+    # set the access/api keys
+    mpower.api_keys = MP_ACCESS_TOKENS
 
     # Invoice
-    store = Store({'name':'FooBar Shop'})
+    store = mpower.Store({'name':'FooBar Shop'})
     items = [{"name": "VIP Ticket", "quantity": 2,
          "unit_price": "35.0", "total_price": "70.0",
          "description": "VIP Tickets for the MPower Event"}]
-    invoice = Invoice(store, MP_ACCESS_TOKENS, True)
+    invoice = mpower.Invoice(store)
     invoice.add_items(items * 10)
     # taxes are (key,value) pairs
     invoice.add_taxes([("NHIS TAX", 23.8), ("VAT", 5)])
@@ -54,8 +57,8 @@ Usage
     opr_data = {'account_alias': '02XXXXXXXX',
                 'description': 'Hello World',
                  'total_amount': 345}
-    store = Store({"name":"FooBar Shop"})
-    opr = OPR(opr_data, store, MP_ACCESS_TOKENS, True)
+    store = mpower.Store({"name":"FooBar Shop"})
+    opr = mpower.OPR(opr_data, store)
     # You can also pass the data to the `create` function
     successful, response = opr.create()
     if successful:
@@ -69,7 +72,7 @@ Usage
         "card_number" : "4242424242424242", "card_cvc" : "123",
         "exp_month" : "06", "exp_year" : "2010", "amount" : "300"
     }
-    direct_card = DirectCard(card_info, MP_ACCESS_TOKENS, True)
+    direct_card = mpower.DirectCard(card_info)
     # this request should fail since the card_info data is invalid
     successful, response = direct_card.process()
 
@@ -78,7 +81,7 @@ Usage
     account_alias =  "02XXXXXXXX"
     amount =  30.50
     # toggle debug switch to True
-    direct_pay = DirectPay(account_alias, amount, MP_ACCESS_TOKENS, True)
+    direct_pay = mpower.DirectPay(account_alias, amount)
     status, response = direct_pay.process()
 
 
@@ -94,13 +97,6 @@ Issues, forks, and pull requests are welcome!
 
 Note
 ----
-- You can also set the following system/shell variables for use with library:
-  MP_Master_Key, MP_Public_Key, MP_Token
-- OR, use *MP_ACCESS_TOKENS* as the variable name that holds your
-  MPower Payments Access Tokens.
-  For example: MP_ACCESS_TOKENS = {"MP-Master-key": "ATGHJIUTF", ...}.
-  This variable is picked up at runtime as a measure of last resort
-- This is a proof of concept, and the API will suffer major changes
 - Some of the API calls require formal approval from MPower Payments
 - This library has not being used in any production environment, yet.
 - For more information, please read the  `MPower Payments HTTP API`_
