@@ -5,7 +5,7 @@ from . import Payment
 class DirectCard(Payment):
     """DirectCard processing class
 
-    This class handle billing of clients using their credit card information
+    This class handles billing of clients using their credit card information
     Card info format:
        '{ "card_name" : "Alfred Robert Rowe",
           "card_number" : "4242424242424242", "card_cvc" : "123",

@@ -1,4 +1,8 @@
-"""Payment processing logic for DirectPay, DirectCard, Invoice, and OPR"""
+"""MPower Payments
+
+MPower Payments Python clinet library.
+Modules implemented: DirectPay, DirectCard, Invoice, and OPR
+"""
 
 __version__ = '0.1.0'
 __author__ = "Mawuli Adzaku <mawuli@mawuli.me>"
@@ -66,14 +70,12 @@ class Payment(object):
         self.store = __MODULE__.store or Store()
 
     def _process(self, resource=None, data=None):
-        """Processes the current ransaction
+        """Processes the current transaction
 
         Sends an HTTP request to the currently active endpoint of the MPower API
         """
-        # Return None(resolves to a GET request) if no data is to be sent
-        _data = json.dumps(self._data) if self._data else None
-        # use object's accumulated data if no data is passed
-        _data = data if data else _data
+        # use object's data if no data is passed
+        _data = data if data else self._data
         req = urllib2.Request(self.get_rsc_endpoint(resource),
                               json.dumps(_data), self.headers)
         response = urllib2.urlopen(req)
