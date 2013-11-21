@@ -1,4 +1,4 @@
-from distutils.core import setup, Command
+from setuptools import setup, Command
 from unittest import TextTestRunner, TestLoader
 from glob import glob
 from os.path import splitext, basename, join as pjoin
@@ -58,21 +58,22 @@ class CleanCommand(Command):
             except:
                 pass
 
+
 def readme(filename='README.rst'):
     with open('README.rst') as f:
-        text=f.read()
+        text = f.read()
     f.close()
     return text
 
 setup(
     name='mpower',
-    version='0.1.0',
+    version=__import__('mpower').__version__,
     author='Mawuli Adzaku',
     author_email='mawuli@mawuli.me',
     packages=['mpower'],
-    cmdclass = {'test': TestCommand, 'clean': CleanCommand},
+    cmdclass={'test': TestCommand, 'clean': CleanCommand},
     scripts=[],
-    url='http://pypi.python.org/pypi/mpower',
+    url='https://github.com/mawuli-ypa/mpower-python',
     license='LICENSE.txt',
     keywords="mpower mobile money payments",
     description='MPower Payments Python client library',
@@ -83,4 +84,5 @@ setup(
         "Topic :: Utilities",
         "License :: OSI Approved :: MIT License",
     ],
+    install_requires=['requests >=2.0'],
 )
