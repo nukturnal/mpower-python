@@ -1,3 +1,5 @@
+.. image:: https://api.travis-ci.org/mawuli-ypa/mpower-python.png
+
 MPower Python Client Library
 ============================
 
@@ -102,4 +104,4 @@ Note
 - Tested on Python 2.6, 2.7, and 3+. `Build Status`_
 
 .. _MPower Payments HTTP API: http://mpowerpayments.com/developers/docs/http.html
-.. _Build Status: https://travis-ci.org/mawuli-ypa/mpower-python
+.. _Build Status: https://api.travis-ci.org/mawuli-ypa/mpower-python.png
