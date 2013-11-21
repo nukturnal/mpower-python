@@ -1,11 +1,16 @@
 from distutils.core import setup, Command
 from unittest import TextTestRunner, TestLoader
 from glob import glob
-from os.path import splitext, basename, join as pjoin, walk
+from os.path import splitext, basename, join as pjoin
+try:
+    from os.path import walk
+except ImportError:
+    from os import walk
 import os
 
+
 class TestCommand(Command):
-    user_options = [ ]
+    user_options = []
 
     def initialize_options(self):
         self._dir = os.getcwd()
@@ -17,7 +22,7 @@ class TestCommand(Command):
         '''
         Finds all the tests modules in tests/, and runs them.
         '''
-        testfiles = [ ]
+        testfiles = []
         for t in glob(pjoin(self._dir, 'tests', '*.py')):
             if not t.endswith('__init__.py'):
                 testfiles.append('.'.join(
@@ -27,9 +32,8 @@ class TestCommand(Command):
         ROOT = os.path.dirname(os.getcwd())
         MPOWER_LIBS = os.path.join(ROOT, "mpower")
         sys.path.append(MPOWER_LIBS)
-
         tests = TestLoader().loadTestsFromNames(testfiles)
-        t = TextTestRunner(verbosity = 1)
+        t = TextTestRunner(verbosity=1)
         t.run(tests)
 
 
@@ -38,7 +42,7 @@ class CleanCommand(Command):
     user_options = []
 
     def initialize_options(self):
-        self._clean_me = [ ]
+        self._clean_me = []
         for root, dirs, files in os.walk('.'):
             for f in files:
                 if f.endswith('.pyc'):

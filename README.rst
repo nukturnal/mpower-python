@@ -1,6 +1,8 @@
 MPower Python Client Library
 ============================
 
+[![Build Status](https://travis-ci.org/mawuli-ypa/mpower-python.png?branch=master)](https://travis-ci.org/mawuli-ypa/mpower-python)
+
 This is a python library for accessing the MPower Payments HTTP API
 
 
