@@ -9,7 +9,7 @@ __author__ = "Mawuli Adzaku <mawuli@mawuli.me>"
 
 import os
 import sys
-import urllib2
+import requests
 try:
     import simplejson as json
 except ImportError:
@@ -22,15 +22,21 @@ store = None
 
 # MPower HTTP API version
 API_VERSION = 'v1'
+
+SERVER = "app.mpowerpayments.com"
+
 #Sandbox Endpoint
-SANDBOX_ENDPOINT="https://app.mpowerpayments.com/sandbox-api/%s/" % API_VERSION
-#Live Endpoint
-LIVE_ENDPOINT="https://app.mpowerpayments.com/api/%s/" % API_VERSION
-# user-agent headers
-MP_USER_AGENT="mpower-python/v%s" % __version__
+SANDBOX_ENDPOINT = "https://%s/sandbox-api/%s/" % (SERVER, API_VERSION)
+
+# Live Endpoint
+LIVE_ENDPOINT = "https://%s/api/%s/" % (SERVER, API_VERSION)
+
+# user-agent
+MP_USER_AGENT = "mpower-python/v%s" % __version__
 
 # simple hack to reference current module
 __MODULE__ = sys.modules[__name__]
+
 
 class MPowerError(Exception):
     """Base Exception class"""
@@ -38,7 +44,6 @@ class MPowerError(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value)
-
 
 
 class Store(object):
@@ -69,18 +74,22 @@ class Payment(object):
         self._data = None
         self.store = __MODULE__.store or Store()
 
-    def _process(self, resource=None, data=None):
+    def _process(self, resource=None, data={}):
         """Processes the current transaction
 
         Sends an HTTP request to the currently active endpoint of the MPower API
         """
         # use object's data if no data is passed
-        _data = data if data else self._data
-        req = urllib2.Request(self.get_rsc_endpoint(resource),
-                              json.dumps(_data), self.headers)
-        response = urllib2.urlopen(req)
-        if response.code == 200:
-            self._response = json.loads(response.read())
+        _data = data or self._data
+        rsc_url = self.get_rsc_endpoint(resource)
+        if _data:
+            req = requests.post(rsc_url, data=json.dumps(data),
+                               headers=self.headers)
+        else:
+            req = requests.get(rsc_url, params=data,
+                               headers=self.headers)
+        if req.status_code == 200:
+            self._response = json.loads(req.text)
             if int(self._response['response_code']) == 00:
                 return (True, self._response)
             else:
@@ -90,7 +99,7 @@ class Payment(object):
     @property
     def headers(self):
         """Returns the client's Request headers"""
-        return dict(self._config.items() + self._headers.items())
+        return dict(self._config, **self._headers)
 
     def add_header(self, header):
         """Add a custom HTTP header to the client's request headers"""
@@ -124,10 +133,10 @@ from .invoice import Invoice
 from .direct_payments import DirectPay, DirectCard
 from .opr import OPR
 
-__all__ = [Payment.__name__,
+__all__ = [Store.__name__,
+           Payment.__name__,
            Invoice.__name__,
            DirectCard.__name__,
            DirectPay.__name__,
-           OPR.__name__,
-           Store.__name__,
+           OPR.__name__
 ]

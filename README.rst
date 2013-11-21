@@ -1,8 +1,6 @@
 MPower Python Client Library
 ============================
 
-[![Build Status](https://travis-ci.org/mawuli-ypa/mpower-python.png?branch=feature_basic)](https://travis-ci.org/mawuli-ypa/mpower-python)
-
 This is a Python library for accessing the MPower Payments HTTP API.
 
 Installation
@@ -13,7 +11,7 @@ Installation
     $ sudo pip install mpower
     $ OR git clone https://github.com/nukturnal/mpower-python
     $ cd mpower-python; python setup.py install`
-    $ python setup.py test # run unit tests
+    $ nosetests tests/  # run unit tests
 
 Usage
 -----
@@ -101,5 +99,7 @@ Note
 - Some of the API calls require formal approval from MPower Payments
 - This library has not being used in any production environment, yet.
 - For more information, please read the  `MPower Payments HTTP API`_
+- Tested on Python 2.6, 2.7, and 3+. `Build Status`_
 
 .. _MPower Payments HTTP API: http://mpowerpayments.com/developers/docs/http.html
+.. _Build Status: https://travis-ci.org/mawuli-ypa/mpower-python

@@ -30,7 +30,7 @@ class TestOPR(unittest.TestCase):
         status, _ = self.opr.charge({'token': token,
                                      'confirm_token': "56Y8"})
         # request should because the token and
-        # comfirm_token combination are wrong
+        # confirm_token combination are wrong
         self.assertFalse(status)
 
 if __name__ == '__main__':
