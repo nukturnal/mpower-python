@@ -18,7 +18,6 @@ except ImportError:
 # runs in LIVE mode by defaults
 debug = False
 api_keys = {}
-store = None
 
 # MPower HTTP API version
 API_VERSION = 'v1'
@@ -34,7 +33,7 @@ LIVE_ENDPOINT = "https://%s/api/%s/" % (SERVER, API_VERSION)
 # user-agent
 MP_USER_AGENT = "mpower-python/v%s" % __version__
 
-# simple hack to reference current module
+# fixme: find a better way of 'self' referencing
 __MODULE__ = sys.modules[__name__]
 
 
@@ -49,17 +48,22 @@ class MPowerError(Exception):
 class Store(object):
     """MPower Store
 
-    Creates a storw object for MPower Payments transactions
+    Creates a store object for MPower Payments transactions
     """
-    def __init__(self, info={}):
-        self.info = {"name": info.get("name"),
-                     "tagline": info.get("tagline"),
-                     "postal_address": info.get("postal_address"),
-                     "phone": info.get("phone"),
-                     "logo_url": info.get("logo_url"),
-                     "website_url": info.get("website_url")
-        }
+    def __init__(self, **kwargs):
+        self.name = kwargs.get('name', None)
+        self.tagline = kwargs.get('tagline', None)
+        self.postal_address = kwargs.get('postal_address', None)
+        self.phone = kwargs.get('phone', None)
+        self.website_url = kwargs.get('website_url', None)
 
+    @property
+    def info(self):
+        """Returns the store information
+
+        What this does is simply return the store object's attributes
+        """
+        return self.__dict__
 
 class Payment(object):
     """Base class for other MPower payments classes"""
@@ -72,7 +76,7 @@ class Payment(object):
         self._response = None
         # data to send to server
         self._data = None
-        self.store = __MODULE__.store or Store()
+        self.store = Store(name=None)
 
     def _process(self, resource=None, data={}):
         """Processes the current transaction

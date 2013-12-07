@@ -11,7 +11,7 @@ class TestOPR(unittest.TestCase):
         self.opr_data = {'account_alias': '0266636984',
                          'description': 'Hello World',
                          'total_amount': 345}
-        store = mpower.Store({"name": "FooBar Shop"})
+        store = mpower.Store(name="FooBar Shop")
         self.opr = mpower.OPR(self.opr_data, store)
 
     def tearDown(self):

@@ -11,7 +11,7 @@ class TestGeneral(unittest.TestCase):
     """General/Miscellaneous tests"""
     def setUp(self):
         # Your MPower developer tokens
-        self.store = mpower.Store({"name": "FooBar store"})
+        self.store = mpower.Store(name="FooBar store")
         self.opr_data = {'total_amount': 345,
                          'description': "Hello World",
                          "account_alias": "0266636984"}

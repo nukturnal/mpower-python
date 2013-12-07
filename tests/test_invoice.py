@@ -9,7 +9,7 @@ mpower.api_keys = MP_ACCESS_TOKENS
 class Invoice(unittest.TestCase):
     def setUp(self):
         unittest.TestCase.setUp(self)
-        self.store = mpower.Store({'name': 'FooBar Shop'})
+        self.store = mpower.Store(name="FooBar Shop")
         self.items = [{"name": "VIP Ticket",
                        "quantity": 2,
                        "unit_price": "35.0",
