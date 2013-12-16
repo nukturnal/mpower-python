@@ -34,7 +34,7 @@ Usage
     mpower.api_keys = MP_ACCESS_TOKENS
 
     # Invoice
-    store = mpower.Store({'name':'FooBar Shop'})
+    store = mpower.Store(name='FooBar Shop')
     items = [{"name": "VIP Ticket", "quantity": 2,
          "unit_price": "35.0", "total_price": "70.0",
          "description": "VIP Tickets for the MPower Event"}]
@@ -58,7 +58,7 @@ Usage
     opr_data = {'account_alias': '02XXXXXXXX',
                 'description': 'Hello World',
                  'total_amount': 345}
-    store = mpower.Store({"name":"FooBar Shop"})
+    store = mpower.Store(name='FooBar Shop')
     opr = mpower.OPR(opr_data, store)
     # You can also pass the data to the `create` function
     successful, response = opr.create()
@@ -99,7 +99,6 @@ Issues, forks, and pull requests are welcome!
 Note
 ----
 - Some of the API calls require formal approval from MPower Payments
-- This library has not being used in any production environment, yet.
 - For more information, please read the  `MPower Payments HTTP API`_
 - Tested on Python 2.6, 2.7, and 3+. `Build Status`_
 
